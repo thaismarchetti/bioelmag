@@ -14,10 +14,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import numpy as np
+import copy
+import pickle
 
 class EvokedMaps:
     def __init__(self):
-        import numpy as np
         self.data = np.array(())
         self.times = np.array(())
         self.xyz = np.array(())
@@ -37,7 +39,6 @@ class EvokedMaps:
         self.data = data
 
     def add_mne_Evoked(self, Evoked):
-        import numpy as np
         if self.data.size == 0:
             self.data = Evoked.data
             self.times = Evoked.times
@@ -52,26 +53,22 @@ class EvokedMaps:
         self.names = Evoked.ch_names
 
     def copy(self):
-        import copy
         copied_evoked = copy.deepcopy(self)
         return copied_evoked
 
     def save(self, filepath):
         # filepath should have extension -evomap.obj
-        import pickle
         filehandler = open(filepath, 'wb')
         pickle.dump(self, filehandler)
 
     def open(self, filepath):
         # filepath should have extension -evomap.obj
-        import pickle
         filehandler = open(filepath, 'rb')
         return pickle.load(filehandler)
 
 
 class covariance_matrix:
     def __init__(self):
-        import numpy as np
         self.data = np.array(())
         self.names = np.array(())
         self.std = np.array(())
@@ -83,19 +80,16 @@ class covariance_matrix:
         self.std[[ch_indx1, ch_indx2]] = self.std[[ch_indx2, ch_indx1]]
 
     def update_std(self):
-        import numpy as np
         for k, j in enumerate(self.std):
             self.std[k] = np.sqrt(self.data[k, k])
 
     def copy(self):
-        import copy
         copied = copy.deepcopy(self)
         return copied
 
 
 class corrcoef_matrix:
     def __init__(self):
-        import numpy as np
         self.data = np.array(())
         self.names = np.array(())
         self.std = np.array(())
@@ -107,38 +101,32 @@ class corrcoef_matrix:
         self.std[[ch_indx1, ch_indx2]] = self.std[[ch_indx2, ch_indx1]]
 
     def calculate_from_covmatrix(self, covmatrix):
-        import numpy as np
         self.data = covmatrix.data / np.array((np.dot(np.matrix(covmatrix.std).T, np.matrix(covmatrix.std))))
         self.names = covmatrix.names
         self.std = covmatrix.std
 
     def copy(self):
-        import copy
         copied = copy.deepcopy(self)
         return copied
 
 
 class information_index:
     def __init__(self):
-        import numpy as np
         self.data = np.array(())
 
     def calculate_index(self, cov_mat, start_indx=0):
-        import numpy as np
         cal_ind = np.zeros((len(cov_mat.data)))
         for i in range(start_indx, len(cov_mat.data)):
             cal_ind[i] = np.sum((cov_mat.data[start_indx:, i]**2)/(cov_mat.std[i]**2))
         self.data = cal_ind
 
     def calculate_index_2(self, cov_mat, start_indx=0):
-        import numpy as np
         cal_ind = np.zeros((len(cov_mat.data)))
         for i in range(start_indx, len(cov_mat.data)):
             cal_ind[i] = np.trace((1.0/(cov_mat.std[i]**2))*np.array(np.dot(np.matrix(cov_mat.data[i, start_indx:]).T, np.matrix(cov_mat.data[i, start_indx:]))))
         self.data = cal_ind
 
     def calculate_index_3(self, cov_mat, start_indx=0):
-        import numpy as np
         cor_mat = corrcoef_matrix()
         cor_mat.calculate_from_covmatrix(cov_mat)
         cal_ind = np.zeros((len(cor_mat.data)))
@@ -151,14 +139,12 @@ class information_index:
 
 class leadsel_matrix:
     def __init__(self):
-        import numpy as np
         self.data = np.array(())
         self.unchosen = np.array(())
         self.chosen = np.array(())
         self.error = np.array(())
 
     def calculate_lsm(self, cov_mat, no_chosen_ch):
-        import numpy as np
         KMM = cov_mat.data[:no_chosen_ch, :no_chosen_ch]
         KMM_inv = np.linalg.inv(KMM)
         KUM = cov_mat.data[no_chosen_ch:, :no_chosen_ch]
@@ -168,19 +154,16 @@ class leadsel_matrix:
 
     def save(self, filepath):
         # filepath should have extension -lsm.obj
-        import pickle
         filehandler = open(filepath, 'wb')
         pickle.dump(self, filehandler)
 
     def open(self, filepath):
         # filepath should have extension -lsm.obj
-        import pickle
         filehandler = open(filepath, 'rb')
         return pickle.load(filehandler)
 
 
 def get_leadsel_matrix(cov_matrix, no_best_ch, opm_sensors=False):
-    import numpy as np
     work_cov = cov_matrix.copy()
     work_cov_orig = cov_matrix.copy()
     inf_ind = information_index()
@@ -254,7 +237,6 @@ def get_mne_EvokedMaps(Evoked):
 
 
 def get_covariance_matrix(EvokedMaps, time_inter=None):
-    import numpy as np
     # QUESTION SHOULD STD BE ON WHOLE INTERVAL OR NOT?
 
     cov_matrix = covariance_matrix()
@@ -288,7 +270,6 @@ def get_covariance_matrix(EvokedMaps, time_inter=None):
 
 
 def get_corrcoef_matrix(EvokedMaps, time_inter=None):
-    import numpy as np
     # QUESTION SHOULD STD BE ON WHOLE INTERVAL OR NOT?
 
     corr_matrix = corrcoef_matrix()
@@ -326,7 +307,6 @@ def get_corrcoef_matrix(EvokedMaps, time_inter=None):
 
 
 def create_evokedmaps_lsm(evokedmaps, LSM, time_inter=None):
-    import numpy as np
     lsm_evoked = evokedmaps.copy()
 
     chosen_indx = np.zeros(len(LSM.chosen), dtype=int)
@@ -344,7 +324,6 @@ def create_evokedmaps_lsm(evokedmaps, LSM, time_inter=None):
 
 
 def evokedmaps_zeros(evokedmaps, LSM):
-    import numpy as np
     lsm_evoked = evokedmaps.copy()
 
     unchosen_indx = np.zeros(len(LSM.unchosen), dtype=int)

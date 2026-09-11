@@ -1,9 +1,14 @@
+import pyvista as pv
+import mne
+import numpy as np
+import random
+import scipy.signal as signal
+import matplotlib.pyplot as plt
+
+
 def plot_psd(raw, picks="all", exclude=(), sqrt=True, scalling=1,
              nperseg=2**20, xlabel='frequency [Hz]',
              ylabel=r'$\mathrm{PSD \/ [fT / \sqrt{Hz}]}$'):
-    import scipy.signal as signal
-    import numpy as np
-    import matplotlib.pyplot as plt
 
     raw_data = raw.copy().pick(picks, exclude=exclude).get_data()*scalling
 
@@ -26,9 +31,6 @@ def plot_psd(raw, picks="all", exclude=(), sqrt=True, scalling=1,
 def plot_magnetometers31(subject_dir, name, evoked, magnetometer_number,
                          coil_def, filename="rand_name"):
     # plot sensors
-    import os
-    import numpy as np
-
     xyz1 = []
     rot_mat = []
     for j, i in enumerate(evoked.info.ch_names):
@@ -113,11 +115,6 @@ def plot_magnetometers31(subject_dir, name, evoked, magnetometer_number,
 
 def plot_sensors_pyvista1(surfaces, sensors, sensors2=[], elements=[],
                           arrow_color="black", grad=0):
-    import pyvista as pv
-    import mne
-    import numpy as np
-    import random
-
     pv.set_plot_theme("document")
     p = pv.Plotter()
 

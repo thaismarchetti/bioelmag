@@ -1,5 +1,7 @@
+import numpy
+
+
 def imp_bin_data(fn1, fn2, encoding="utf-8"):
-    import numpy
     no_sa, no_ch, no_se, no_gr, no_mo = imp_hdr_param(fn2, encoding=encoding)
     data = numpy.fromfile(fn1, dtype=numpy.float32)
     nl = float(len(data)) / float(no_ch)

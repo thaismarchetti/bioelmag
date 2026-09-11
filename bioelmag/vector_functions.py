@@ -1,6 +1,12 @@
+import math
+import numpy as np
+import random
+from math import pi
+from numpy import linalg as LA
+
+
 def trans_cart_spher(dip1):
-    import math
-    r = math.sqrt(dip1[0]**2 + dip1[1]**2 + dip1[2]**2)
+    r = np.sqrt(dip1[0]**2 + dip1[1]**2 + dip1[2]**2)
     theta = math.acos(dip1[2]/r)
     phi = math.atan(dip1[1]/dip1[0])
     n_dip = [None]*3
@@ -12,7 +18,6 @@ def trans_cart_spher(dip1):
 
 
 def trans_spher_cart(dip1):
-    import math
     x = dip1[0] * math.sin(dip1[1]) * math.cos(dip1[2])
     y = dip1[0] * math.sin(dip1[1]) * math.sin(dip1[2])
     z = dip1[0] * math.cos(dip1[1])
@@ -24,31 +29,24 @@ def trans_spher_cart(dip1):
 
 
 def rotation_x(alpha):
-    from math import cos, sin
-    matrix = [[1, 0, 0], [0, cos(alpha), -sin(alpha)],
-              [0, sin(alpha), cos(alpha)]]
+    matrix = [[1, 0, 0], [0, math.cos(alpha), -math.sin(alpha)],
+              [0, math.sin(alpha), math.cos(alpha)]]
     return matrix
 
 
 def rotation_y(alpha):
-    from math import cos, sin
-    matrix = [[cos(alpha), 0, sin(alpha)], [0, 1, 0],
-              [-sin(alpha), 0, cos(alpha)]]
+    matrix = [[math.cos(alpha), 0, math.sin(alpha)], [0, 1, 0],
+              [-math.sin(alpha), 0, math.cos(alpha)]]
     return matrix
 
 
 def rotation_z(alpha):
-    from math import cos, sin
-    matrix = [[cos(alpha), -sin(alpha), 0],
-              [sin(alpha), cos(alpha), 0], [0, 0, 1]]
+    matrix = [[math.cos(alpha), -math.sin(alpha), 0],
+              [math.sin(alpha), math.cos(alpha), 0], [0, 0, 1]]
     return matrix
 
 
 def rm_radial_component(dip):
-    import numpy as np
-    from math import cos, sin, pi
-    from numpy import linalg as LA
-
     radius, theta, phi = trans_cart_spher(dip[0:3])
     theta = -theta
     phi = -phi
@@ -70,8 +68,6 @@ def rm_radial_component(dip):
 
 
 def create_net_sphere_hex(circles, direction, lenght, radius):
-    import math
-    import numpy as np
 
     # INITIALIZING
     positions = []
@@ -111,8 +107,7 @@ def create_net_sphere_hex(circles, direction, lenght, radius):
 
 
 def create_2d_square_sp(n1, n2, d, z):
-    import numpy
-    source_space = numpy.zeros((n1*n2, 6))
+    source_space = np.zeros((n1*n2, 6))
     ii = 0
     for i in range(0, n1, 1):
         for j in range(0, n2, 1):
@@ -125,8 +120,7 @@ def create_2d_square_sp(n1, n2, d, z):
 
 
 def create_2d_square_me(n1, n2, d, z):
-    import numpy
-    source_space = numpy.zeros((n1*n2, 6))
+    source_space = np.zeros((n1*n2, 6))
     ii = 0
     for i in range(0, n1, 1):
         for j in range(0, n2, 1):
@@ -142,13 +136,11 @@ def create_2d_square_me(n1, n2, d, z):
 
 
 def root_mean_square(field):
-    import numpy as np
     rms = np.sqrt(np.mean(np.square(field)))
     return rms
 
 
 def R_squared(izr, izm):
-    import numpy as np
     # FOR LINEAR FIT ONLY
     SE_L = np.sum((izm - izr)*(izm - izr))
     mean_izm = np.average(izm)
@@ -161,7 +153,6 @@ def R_squared(izr, izm):
 
 def CHI_squared(izr, izm):
     # Pearson's chi-squared test
-    import numpy as np
     CHICHI = np.sum((izm - izr)**2/izr)
     return CHICHI
 
@@ -169,7 +160,6 @@ def CHI_squared(izr, izm):
 def RMSerr(izr, izm):
     # defined as vojkos
     # rmserr @ root mean square error
-    import numpy as np
     rms = np.sum((izm - izr)**2)
     rms = rms / len(izm)
     return rms
@@ -177,7 +167,6 @@ def RMSerr(izr, izm):
 
 def rel_err(izr, izm):
     # defined as vojkos
-    import numpy as np
     rms1 = np.sqrt(np.sum(izr * izr) / len(izr))
     rms2 = np.sqrt(np.sum(izm * izm) / len(izm))
 
@@ -190,7 +179,6 @@ def rel_err(izr, izm):
 
 
 def rel_err_vojko(izm, izr):
-    import numpy as np
     rms1 = np.sqrt(np.mean(np.square(izm - izr)))
     rms2 = np.sqrt(np.mean(np.square(izm)))
 
@@ -199,7 +187,6 @@ def rel_err_vojko(izm, izr):
 
 
 def corr_coeff_vojko(izm, izr):
-    import numpy as np
     covariance = np.sum((izm - np.mean(izm))*(izr - np.mean(izr)))
     std1 = np.sqrt(np.sum((izm - np.mean(izm))**2))
     std2 = np.sqrt(np.sum((izr - np.mean(izr))**2))
@@ -207,12 +194,10 @@ def corr_coeff_vojko(izm, izr):
 
 
 def create_rand_dipole_quart(rad, theta, phi):
-    import random
-    import numpy
 
     dipcheck = 0
     while dipcheck == 0:
-        dip = numpy.zeros(6)
+        dip = np.zeros(6)
         dip[0] = rad * random.uniform(-1.0, 1.0)   # rad * random.random()
         dip[1] = rad * random.uniform(-1.0, 1.0)   # theta * random.random()
         dip[2] = rad * random.uniform(-1.0, 1.0)  # phi * random.random()
@@ -226,7 +211,7 @@ def create_rand_dipole_quart(rad, theta, phi):
     dip[4] = random.uniform(-1.0, 1.0)
     dip[5] = random.uniform(-1.0, 1.0)
 
-    norma = numpy.sqrt(dip[3]**2 + dip[4]**2 + dip[5]**2)
+    norma = np.sqrt(dip[3]**2 + dip[4]**2 + dip[5]**2)
 
     dip[3] /= norma
     dip[4] /= norma
@@ -236,17 +221,14 @@ def create_rand_dipole_quart(rad, theta, phi):
 
 
 def create_rand_dipole_sphere(x0, y0, z0, rad_min, rad_max):
-    import random
-    import numpy
-
     dipcheck = 0
     while dipcheck == 0:
-        dip = numpy.zeros(6)
+        dip = np.zeros(6)
         dip[0] = rad_max * random.uniform(-1.0, 1.0)   # rad * random.random()
         dip[1] = rad_max * random.uniform(-1.0, 1.0)   # theta * random.random()
         dip[2] = rad_max * random.uniform(-1.0, 1.0)  # phi * random.random()
 
-        if rad_min <= numpy.sqrt(dip[0]**2 + dip[1]**2 + dip[2]**2) <= rad_max:
+        if rad_min <= np.sqrt(dip[0]**2 + dip[1]**2 + dip[2]**2) <= rad_max:
             dipcheck = 1
             premik = [x0, y0, z0]
             dip[0:3] = dip[0:3] + premik
@@ -254,7 +236,7 @@ def create_rand_dipole_sphere(x0, y0, z0, rad_min, rad_max):
     dip[3] = random.uniform(-1.0, 1.0)
     dip[4] = random.uniform(-1.0, 1.0)
     dip[5] = random.uniform(-1.0, 1.0)
-    norma = numpy.sqrt(dip[3]**2 + dip[4]**2 + dip[5]**2)
+    norma = np.sqrt(dip[3]**2 + dip[4]**2 + dip[5]**2)
     dip[3] /= norma
     dip[4] /= norma
     dip[5] /= norma
@@ -263,13 +245,11 @@ def create_rand_dipole_sphere(x0, y0, z0, rad_min, rad_max):
 
 
 def dist_two_points(point1, point2):
-    import numpy as np
     dist = np.sqrt((point1[0]-point2[0])**2+(point1[1]-point2[1])**2+(point1[2]-point2[2])**2)
     return dist
 
 
 def arrange_leftright_dip(dipole):
-    import numpy as np
     if len(dipole) > 7:
         if dipole[0] < dipole[6]:
             leftdipole = dipole[0:6]
@@ -286,22 +266,18 @@ def arrange_leftright_dip(dipole):
 
 
 def dotproduct(v1, v2):
-    import math
     return sum((a*b) for a, b in zip(v1, v2))
 
 
 def length(v):
-    import math
-    return math.sqrt(dotproduct(v, v))
+    return np.sqrt(dotproduct(v, v))
 
 
 def angle(v1, v2):
-    import math
     return math.acos(dotproduct(v1, v2) / (length(v1) * length(v2)))
 
 
 def rotate_via_numpy(xx, yy, radians):
-    import numpy as np
     """Use numpy to build a rotation matrix and take the dot product."""
     c, s = np.cos(radians), np.sin(radians)
     j = np.array([[c, s], [-s, c]])
@@ -310,7 +286,6 @@ def rotate_via_numpy(xx, yy, radians):
 
 
 def check_nearest_neighbours(lists, point):
-    import numpy as np
     dx = lists[:, 0] - point[0]
     dy = lists[:, 1] - point[1]
     dz = lists[:, 2] - point[2]
@@ -319,9 +294,6 @@ def check_nearest_neighbours(lists, point):
 
 
 def create_custom_opm_holders(sensorholders, circles, directions, data_path, save = "nosave"):
-    import math
-    import numpy as np
-
     minz = min(sensorholders[:, 2])
     maxz = max(sensorholders[:, 2])
     dz = (maxz - minz)/(circles-1)
@@ -356,7 +328,7 @@ def create_custom_opm_holders(sensorholders, circles, directions, data_path, sav
             theta = 0
 
         for i in range(int(indexes[j])):
-            dl = math.sqrt(dr*dr - 1.18*(z-minz)*(z-minz))
+            dl = np.sqrt(dr*dr - 1.18*(z-minz)*(z-minz))
             xx = dl*math.cos(theta) + x0
             yy = dl*math.sin(theta) + y0
             zz = z
@@ -377,9 +349,6 @@ def create_custom_opm_holders(sensorholders, circles, directions, data_path, sav
 
 
 def create_custom_opm_holders_elipsoid(sensorholders, circles, directions, save_path, save = "nosave"):
-    import math
-    import numpy as np
-
     minz = min(sensorholders[:, 2])
     maxz = max(sensorholders[:, 2])
     dz = (maxz - minz)/(circles-1)
@@ -419,7 +388,7 @@ def create_custom_opm_holders_elipsoid(sensorholders, circles, directions, save_
             theta = 0
 
         for i in range(int(indexes[j])):
-            dl = math.sqrt(dr*dr - 1.18*(z-minz)*(z-minz))
+            dl = np.sqrt(dr*dr - 1.18*(z-minz)*(z-minz))
             
             # (this is the equation of an ellipsoid):
             phi = np.arccos((z-minz)/coefs[2])
@@ -445,7 +414,6 @@ def create_custom_opm_holders_elipsoid(sensorholders, circles, directions, save_
 
 
 def map_et_coord(xx, yy, zz):
-    import  numpy as np
     # projected helmet coordinates onto a plane
 
     cc = np.where((xx.any() == 0.0) and (yy.any() == 0.0))
@@ -472,8 +440,6 @@ def rigid_transform_3D(A, B):
     # R = 3x3 rotation matrix
     # t = 3x1 column vector
 
-    import numpy as np
-    from math import sqrt
     assert len(A) == len(B)
 
     num_rows, num_cols = A.shape;
@@ -515,8 +481,6 @@ def rigid_transform_3D(A, B):
 
 
 def create_rot_matrix(v1, v2):
-    import numpy as np
-
     a, b = (v1 / np.linalg.norm(v1)).reshape(3), (v2 / np.linalg.norm(v2)).reshape(3)
 
     I = np.identity(3)
@@ -533,7 +497,6 @@ def create_rot_matrix_v2(v1):
     """This function was generated by chatGPT to can calculate the
     EX,EY,EZ triplets (the orientation matrix) by constructing an orthonormal
     basis around the sensor's sensitivity direction."""
-    import numpy as np 
     # Normalize EZ (sensor direction)
     EZ = v1 / np.linalg.norm(v1)
 
@@ -557,15 +520,13 @@ def rotation_matrix(axis, theta):
     # This function has to be moved to bioelmag.vector_functions
     # This is taken from "https://stackoverflow.com/questions/6802577/
     # rotation-of-3d-vector", this user is a absolute madlad!
-    import numpy as np
-    import math
 
     """
     Return the rotation matrix associated with counterclockwise rotation about
     the given axis by theta radians.
     """
     axis = np.asarray(axis)
-    axis = axis / math.sqrt(np.dot(axis, axis))
+    axis = axis / np.sqrt(np.dot(axis, axis))
     a = math.cos(theta / 2.0)
     b, c, d = -axis * math.sin(theta / 2.0)
     aa, bb, cc, dd = a * a, b * b, c * c, d * d

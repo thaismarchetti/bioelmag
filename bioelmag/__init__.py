@@ -4,9 +4,9 @@ bioelmag: Numerical methods in electrobiomagnetism
 The '__init__.py' file of the bioelmag package. It imports all the main modules and functions for easy access.
 It defines the public API of the package. For example, instead of importing the 
 module directly with 'import bioelmag.ptb_opm_protocol as pop', its functions can be exposed through 
-`__init__.py` and imported directly from the package. Ex: 'from bioelmag import <function>'.
+'__init__.py' and imported directly from the package. Ex: 'from bioelmag import <function>'.
 
-TODO: Modify the `__init__.py` file to include the main functions used in the preprocessing pipeline.
+TODO: Modify the '__init__.py' file to include the main functions used in the preprocessing pipeline.
 
 Main modules:
   - ptb_opm_protocol: Load sensor metadata and raw data

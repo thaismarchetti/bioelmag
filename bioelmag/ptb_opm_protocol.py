@@ -1,3 +1,12 @@
+import numpy as np
+import bioelmag.ptb_flthdr as pfhr
+import sys
+import mne
+import bioelmag.vector_functions as vfun
+import re
+
+
+
 def read_sens_info(sens_pos_fn, num_sens=None):
     # full path to the measurement directory
     # the files have to be exported to .csv
@@ -6,8 +15,6 @@ def read_sens_info(sens_pos_fn, num_sens=None):
     # holes on OPM sensor holders built at PTB and
     # "con_position" which corresponds to # of channel
     # in con file
-
-    import numpy as np
     sens_info = {}
 
     # filename = f"{meas_dir}Positions/SensorPositions_{block_name}.csv"
@@ -60,7 +67,6 @@ def read_sens_info_v2(sens_pos_fn, num_sens=None):
     # "con_position" which corresponds to # of channel
     # in con file
 
-    import numpy as np
     sens_info = {}
 
     # filename = f"{meas_dir}Positions/SensorPositions_{block_name}.csv"
@@ -107,7 +113,6 @@ def read_fnirs_chan_info(sens_pos_fn, num_sens=None):
     # "con_position" which corresponds to # of channel
     # in con file
 
-    import numpy as np
     chan_info = {}
 
     # filename = f"{meas_dir}Positions/SensorPositions_{block_name}.csv"
@@ -169,9 +174,6 @@ def read_fnirs_chan_info(sens_pos_fn, num_sens=None):
 
 
 def import_flt_hdr(header_name, value_name):
-    import bioelmag.ptb_flthdr as pfhr
-    import numpy as np
-
     data = np.transpose(pfhr.imp_bin_data(value_name, header_name,
                                           encoding="ISO-8859-1"))
     data = data * (10 ** -6)
@@ -185,9 +187,6 @@ def read_meas_info(meas_info_fn, block_name):
     # the files have to be exported to .csv
     # number of sensors you want to import
     # block name can either be str or int
-    import numpy as np
-    import sys
-
     measurements = np.loadtxt(meas_info_fn, delimiter=";", skiprows=1,
                               dtype=str)
 
@@ -249,9 +248,6 @@ def read_meas_info(meas_info_fn, block_name):
 def create_mne_raw(sens_info, meas_info, data_path, channel_factor=(10 ** -9),
                    sens_hol_path="", subject_dir="", opm_trans_path="",
                    geom_name="", move_fn="", return_pos_dict=False):
-    import mne
-    import numpy as np
-    import bioelmag.vector_functions as vfun
 
     if meas_info["dataformat"] == "flt":
         header_name = data_path[0]
@@ -304,8 +300,6 @@ def create_mne_raw(sens_info, meas_info, data_path, channel_factor=(10 ** -9),
 
 def move_pos_dict(pos_dict, move_fn):
     # This function has to be moved to ptb_opm_protocol
-    import numpy as np
-    import bioelmag.vector_functions as vfun
 
     try:
         with open(move_fn) as fp:
@@ -367,9 +361,6 @@ def move_pos_dict(pos_dict, move_fn):
 
 def create_sens_pos_dict(fn, fileformat):
     # fileformat can be either "all" or "occupied"
-    import re
-    import numpy as np
-
     pos_dict = {}
 
     with open(fn, "r") as F:
@@ -438,9 +429,6 @@ def create_sens_pos_dict(fn, fileformat):
 
 def rotate_translate_pos_dict(pos_dict, opm_trans_path, geom_name, subject_dir="",
                               gen12=2):
-    import bioelmag.vector_functions as vfun
-    import numpy as np
-    import mne
 
     rotation, translation = import_opm_trans(opm_trans_path, geom_name)
     translation = translation / 1000.0
@@ -481,8 +469,6 @@ def rotate_translate_pos_dict(pos_dict, opm_trans_path, geom_name, subject_dir="
 
 
 def import_opm_trans(fn, name):
-    import re
-    import numpy as np
     F = open(fn, 'r')
     num_lines = sum(1 for line in open(fn))
     i = 0
